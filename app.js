@@ -1,4 +1,5 @@
 const Sequelize = require("sequelize");
+const { DataTypes } = Sequelize;
 const db = new Sequelize("sequelize", "root", "ahmednodemysql", {
   host: "localhost",
   port: 3306,
@@ -8,33 +9,35 @@ const db = new Sequelize("sequelize", "root", "ahmednodemysql", {
     freezeTableName: true,
     timestamps: false,
   },
-
 });
 
 const User = db.define(
   "user",
   {
     user_id: {
-      type: Sequelize.DataTypes.INTEGER,
+      type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
     username: {
-      type: Sequelize.DataTypes.STRING,
+      type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        len: [4, 9],
+      },
+      //unique: true,
     },
     password: {
-      type: Sequelize.DataTypes.STRING,
+      type: DataTypes.STRING,
     },
     age: {
-      type: Sequelize.DataTypes.INTEGER,
+      type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 21,
     },
-    num: {
-      type: Sequelize.DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 21,
+    wittCodeRocks: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
     },
   },
   {
@@ -42,15 +45,33 @@ const User = db.define(
     timestamps: false,
   }
 );
-/* 
+
 db.sync({ alter: true })
   .then((data) => {
-    console.log("done");
+    return User.bulkCreate(
+      [
+        {
+          username: "b",
+          password: "abc",
+          age: 24,
+          wittCodeRocks: false,
+        },
+        {
+          username: "vvv vvvv vvvvv",
+          password: "abc",
+          age: 22,
+          wittCodeRocks: false,
+        },
+      ],
+      { validate: true }
+    );
+  })
+  .then((data) => {
+    data.forEach((element) => {
+      console.log(element.toJSON());
+    });
+    console.log("user updated");
   })
   .catch((err) => {
     console.log(err);
   });
- */
-//db.drop({ match: /_test$/ });
-
-console.log(db.models.user);
